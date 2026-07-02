@@ -229,7 +229,7 @@ def coordinate_descent_dna(seq1, seq2):
                 gi[j] = best
                 if best > max_val:
                     max_val, max_i, max_j = best, i, j
-        a1, a2 = [], []
+        seg1, seg2 = [], []
         i, j = max_i, max_j
         while i > 0 and j > 0 and grid[i][j] > 0:
             diag = grid[i - 1][j - 1]
@@ -238,19 +238,49 @@ def coordinate_descent_dna(seq1, seq2):
             if grid[i][j] == diag + (
                 match if seq1[i - 1] == seq2[j - 1] else -mismatch
             ):
-                a1.append(seq1[i - 1])
-                a2.append(seq2[j - 1])
+                seg1.append(seq1[i - 1])
+                seg2.append(seq2[j - 1])
                 i -= 1
                 j -= 1
             elif grid[i][j] == vert - gap:
-                a1.append(seq1[i - 1])
-                a2.append("-")
+                seg1.append(seq1[i - 1])
+                seg2.append("-")
                 i -= 1
             else:
-                a1.append("-")
-                a2.append(seq2[j - 1])
+                seg1.append("-")
+                seg2.append(seq2[j - 1])
                 j -= 1
-        return max_val, "".join(reversed(a1)), "".join(reversed(a2))
+        seg1.reverse()
+        seg2.reverse()
+        pref1, pref2 = seq1[:i], seq2[:j]
+        suff1, suff2 = seq1[max_i:], seq2[max_j:]
+        lp1, lp2 = len(pref1), len(pref2)
+        full1 = []
+        full2 = []
+        if lp1 > lp2:
+            full1.extend(pref1[: lp1 - lp2])
+            full2.extend("-" * (lp1 - lp2))
+            full1.extend(pref1[lp1 - lp2 :])
+            full2.extend(pref2)
+        else:
+            full1.extend("-" * (lp2 - lp1))
+            full2.extend(pref2[: lp2 - lp1])
+            full1.extend(pref1)
+            full2.extend(pref2[lp2 - lp1 :])
+        full1.extend(seg1)
+        full2.extend(seg2)
+        ls1, ls2 = len(suff1), len(suff2)
+        if ls1 > ls2:
+            full1.extend(suff1[:ls2])
+            full2.extend(suff2)
+            full1.extend(suff1[ls2:])
+            full2.extend("-" * (ls1 - ls2))
+        else:
+            full1.extend(suff1)
+            full2.extend(suff2[:ls1])
+            full1.extend("-" * (ls2 - ls1))
+            full2.extend(suff2[ls1:])
+        return max_val, "".join(full1), "".join(full2)
 
     nw_score, nw_a1, nw_a2 = nw_full()
     sw_score, sw_a1, sw_a2 = sw_full()
