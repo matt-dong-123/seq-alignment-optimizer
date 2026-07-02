@@ -50,6 +50,34 @@ def format_alignment(a1: str, a2: str, width: int = 60) -> list[str]:
     return rows
 
 
+def format_alignment_html(a1: str, a2: str, width: int = 60) -> list[str]:
+    rows = []
+    for i in range(0, len(a1), width):
+        seg1 = a1[i : i + width]
+        seg2 = a2[i : i + width]
+        line1_parts = []
+        line2_parts = []
+        indicator_parts = []
+        for c1, c2 in zip(seg1, seg2):
+            if c1 == "-" or c2 == "-":
+                line1_parts.append(f'<span class="aln-gap">{c1}</span>')
+                line2_parts.append(f'<span class="aln-gap">{c2}</span>')
+                indicator_parts.append('<span class="aln-ind-gap"> </span>')
+            elif c1 == c2:
+                line1_parts.append(f'<span class="aln-match">{c1}</span>')
+                line2_parts.append(f'<span class="aln-match">{c2}</span>')
+                indicator_parts.append('<span class="aln-ind-match">|</span>')
+            else:
+                line1_parts.append(f'<span class="aln-mismatch">{c1}</span>')
+                line2_parts.append(f'<span class="aln-mismatch">{c2}</span>')
+                indicator_parts.append('<span class="aln-ind-mismatch">.</span>')
+        rows.append("".join(line1_parts))
+        rows.append("".join(indicator_parts))
+        rows.append("".join(line2_parts))
+        rows.append("")
+    return rows
+
+
 def run_with_weights(
     seq1: str,
     seq2: str,
@@ -84,6 +112,7 @@ def run_with_weights(
             "stats": stats,
             "fitness": stats["matches"] - stats["gaps"],
             "alignment_rows": format_alignment(a1, a2),
+            "alignment_html": format_alignment_html(a1, a2),
         }
 
     return {
@@ -296,6 +325,7 @@ def coordinate_descent_dna(seq1, seq2):
             "stats": stats,
             "fitness": stats["matches"] - stats["gaps"],
             "alignment_rows": format_alignment(a1, a2),
+            "alignment_html": format_alignment_html(a1, a2),
         }
 
     return {
@@ -330,6 +360,7 @@ def coordinate_descent_protein(seq1, seq2, alg_func, alg_type, matrix_name):
         "stats": stats,
         "fitness": stats["matches"] - stats["gaps"],
         "alignment_rows": format_alignment(a1, a2),
+        "alignment_html": format_alignment_html(a1, a2),
     }
 
 
