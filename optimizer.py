@@ -1,9 +1,9 @@
 from src.alignment import nw, sw, dna_score_fn, protein_score_fn
 
 DNA_SEARCH_RANGES = {
-    "match": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
-    "mismatch": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
-    "gap": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0],
+    "match": [1.0,2.0],
+    "mismatch": [1.0,2.0],
+    "gap": [2.0,3.0],
 }
 
 PROTEIN_SEARCH_RANGES = {

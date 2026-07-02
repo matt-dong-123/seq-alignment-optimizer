@@ -18,7 +18,8 @@ def nw(s1: str, s2: str, gap: float, score_fn: Callable[[str, str], float]):
             hori = grid[i][j - 1] - gap
             grid[i][j] = max(diag, vert, hori)
 
-    a1, a2 = "", ""
+    a1=[]
+    a2=[]
     i, j = m, n
     while i > 0 and j > 0:
         score = grid[i][j]
@@ -27,29 +28,29 @@ def nw(s1: str, s2: str, gap: float, score_fn: Callable[[str, str], float]):
         hori = grid[i][j - 1]
 
         if score == diag + score_fn(s1[i - 1], s2[j - 1]):
-            a1 = s1[i - 1] + a1
-            a2 = s2[j - 1] + a2
+            a1.append(s1[i - 1])
+            a2.append(s2[j - 1])
             i -= 1
             j -= 1
         elif score == vert - gap:
-            a1 = s1[i - 1] + a1
-            a2 = "-" + a2
+            a1.append(s1[i - 1])
+            a2.append("-")
             i -= 1
         elif score == hori - gap:
-            a1 = "-" + a1
-            a2 = s2[j - 1] + a2
+            a1.append("-")
+            a2.append(s2[j - 1])
             j -= 1
 
     while i > 0:
-        a1 = s1[i - 1] + a1
-        a2 = "-" + a2
+        a1.append(s1[i - 1])
+        a2.append("-")
         i -= 1
     while j > 0:
-        a1 = "-" + a1
-        a2 = s2[j - 1] + a2
+        a1.append("-")
+        a2.append(s2[j - 1])
         j -= 1
 
-    return grid, a1, a2
+    return grid, "".join(reversed(a1)), "".join(reversed(a2))
 
 
 def sw(s1: str, s2: str, gap: float, score_fn: Callable[[str, str], float]):
@@ -63,9 +64,11 @@ def sw(s1: str, s2: str, gap: float, score_fn: Callable[[str, str], float]):
             diag = grid[i - 1][j - 1] + score_fn(s1[i - 1], s2[j - 1])
             vert = grid[i - 1][j] - gap
             hori = grid[i][j - 1] - gap
-            grid[i][j] = max(diag, vert, hori) if max(diag, vert, hori) > 0 else 0
+            best=max(diag, vert, hori)
+            grid[i][j]=best if best>0 else 0
 
-    a1, a2 = "", ""
+    a1=[]
+    a2=[]
     i, j = max_2d(grid)
     while i > 0 and j > 0 and grid[i][j] > 0:
         score = grid[i][j]
@@ -74,20 +77,20 @@ def sw(s1: str, s2: str, gap: float, score_fn: Callable[[str, str], float]):
         hori = grid[i][j - 1]
 
         if score == diag + score_fn(s1[i - 1], s2[j - 1]):
-            a1 = s1[i - 1] + a1
-            a2 = s2[j - 1] + a2
+            a1.append(s1[i - 1])
+            a2.append(s2[j - 1])
             i -= 1
             j -= 1
         elif score == vert - gap:
-            a1 = s1[i - 1] + a1
-            a2 = "-" + a2
+            a1.append(s1[i - 1])
+            a2.append("-")
             i -= 1
         elif score == hori - gap:
-            a1 = "-" + a1
-            a2 = s2[j - 1] + a2
+            a1.append("-")
+            a2.append(s2[j - 1])
             j -= 1
 
-    return grid, a1, a2
+    return grid, "".join(reversed(a1)), "".join(reversed(a2))
 
 
 def dna_score_fn(match: float, mismatch: float) -> Callable[[str, str], float]:
