@@ -58,7 +58,7 @@
 
             <fieldset class="weights-fieldset">
                 <legend>Fine-tune weights (optional)</legend>
-                <div class="weight-inputs" id="dna-weights">
+                <div class="weight-inputs" id="dna-weights" style="{{ 'display:none' if seq_type == 'protein' else '' }}">
                     <div class="weight-input">
                         <label for="match_weight">Match:</label>
                         <input type="number" id="match_weight" name="match_weight" step="0.1" min="0" value="{{ request.form.get('match_weight', default_weights.match if default_weights and default_weights.get('match') else '') }}">
