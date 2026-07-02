@@ -68,15 +68,19 @@ def run_with_weights(
         else:
             score = max(max(row) for row in grid)
         if seq_type == "dna":
-            weights = {"match": match, "mismatch": mismatch, "gap": gap}
+            weights = {
+                "match": round(match, 3),
+                "mismatch": round(mismatch, 3),
+                "gap": round(gap, 3),
+            }
         else:
-            weights = {"gap": gap}
+            weights = {"gap": round(gap, 3)}
         return {
             "weights": weights,
             "matrix_name": matrix_name,
             "aligned_s1": a1,
             "aligned_s2": a2,
-            "score": score,
+            "score": round(score, 3),
             "stats": stats,
             "fitness": stats["matches"] - stats["gaps"],
             "alignment_rows": format_alignment(a1, a2),
@@ -144,15 +148,21 @@ def coordinate_descent_dna(seq1, seq2):
     gap = 3.0
     n_iter = 3
 
-    mismatch = _golden_section_max(
-        lambda m: _nw_score_dna(seq1, seq2, match, m, gap),
-        *DNA_MISMATCH_BOUNDS,
-        n_iter,
+    mismatch = round(
+        _golden_section_max(
+            lambda m: _nw_score_dna(seq1, seq2, match, m, gap),
+            *DNA_MISMATCH_BOUNDS,
+            n_iter,
+        ),
+        3,
     )
-    gap = _golden_section_max(
-        lambda g: _nw_score_dna(seq1, seq2, match, mismatch, g),
-        *DNA_GAP_BOUNDS,
-        n_iter,
+    gap = round(
+        _golden_section_max(
+            lambda g: _nw_score_dna(seq1, seq2, match, mismatch, g),
+            *DNA_GAP_BOUNDS,
+            n_iter,
+        ),
+        3,
     )
 
     def nw_full():
@@ -252,7 +262,7 @@ def coordinate_descent_dna(seq1, seq2):
             "matrix_name": None,
             "aligned_s1": a1,
             "aligned_s2": a2,
-            "score": score,
+            "score": round(score, 3),
             "stats": stats,
             "fitness": stats["matches"] - stats["gaps"],
             "alignment_rows": format_alignment(a1, a2),
@@ -274,7 +284,7 @@ def coordinate_descent_protein(seq1, seq2, alg_func, alg_type, matrix_name):
             return grid[-1][-1]
         return max(max(row) for row in grid)
 
-    gap = _golden_section_max(score_for, *PROTEIN_GAP_BOUNDS, n_iter=10)
+    gap = round(_golden_section_max(score_for, *PROTEIN_GAP_BOUNDS, n_iter=10), 3)
     grid, a1, a2 = alg_func(seq1, seq2, gap, score_fn)
     stats = alignment_stats(a1, a2)
     if alg_type == "nw":
@@ -286,7 +296,7 @@ def coordinate_descent_protein(seq1, seq2, alg_func, alg_type, matrix_name):
         "matrix_name": matrix_name,
         "aligned_s1": a1,
         "aligned_s2": a2,
-        "score": score,
+        "score": round(score, 3),
         "stats": stats,
         "fitness": stats["matches"] - stats["gaps"],
         "alignment_rows": format_alignment(a1, a2),

@@ -121,11 +121,12 @@
                     <span>Identity: {{ alg.stats.identity }}%</span>
                 </div>
 
-                <div class="alignment">
+                <div class="alignment" id="alignment-{{ alg_key }}">
                     {% for row in alg.alignment_rows %}
                     <pre>{{ row }}</pre>
                     {% endfor %}
                 </div>
+                <button class="btn-download" onclick="downloadAlignment('{{ alg_key }}', '{{ alg_label }}')">Download</button>
             </div>
             {% endfor %}
         </div>
@@ -153,6 +154,24 @@
         window.addEventListener('load', function() {
             document.getElementById('loading-overlay').style.display = 'none';
         });
+
+        function downloadAlignment(algKey, algLabel) {
+            var el = document.getElementById('alignment-' + algKey);
+            var lines = [];
+            el.querySelectorAll('pre').forEach(function(pre) {
+                lines.push(pre.textContent.replace(/\u00a0/g, ' '));
+            });
+            var text = lines.join('\n');
+            var blob = new Blob([text], {type: 'text/plain'});
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = algKey + '-alignment.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
     </script>
 </body>
 </html>

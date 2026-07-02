@@ -170,6 +170,22 @@ h1 {
     white-space: pre;
 }
 
+.btn-download {
+    margin-top: 0.75rem;
+    background: #eef0f4;
+    color: #1a1a2e;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border: 1px solid #ccd0d5;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-download:hover {
+    background: #e2e5ea;
+}
+
 .seq-type-row {
     margin-bottom: 1.25rem;
 }
